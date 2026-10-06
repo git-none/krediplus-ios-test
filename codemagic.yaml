@@ -1,0 +1,93 @@
+workflows:
+  kredi-ios-sideload:
+    name: Kredi+ iOS Build 48 · Sideload
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      vars:
+        BUNDLE_ID: com.krediplus.nativeapp
+        APP_NAME: Kredi+
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Preparar Kredi+ para iOS
+        script: |
+          set -euo pipefail
+
+          # Crear únicamente la plataforma iOS en el proyecto Flutter existente.
+          flutter create . --platforms=ios --org com.krediplus --project-name kredi_plus
+
+          PBX="ios/Runner.xcodeproj/project.pbxproj"
+          PLIST="ios/Runner/Info.plist"
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, re
+
+          bundle = os.environ.get("BUNDLE_ID", "com.krediplus.nativeapp")
+          p = Path("ios/Runner.xcodeproj/project.pbxproj")
+          s = p.read_text()
+
+          vals = list(dict.fromkeys(re.findall(r"PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);", s)))
+          for old in vals:
+              new = bundle + ".RunnerTests" if "RunnerTests" in old else bundle
+              s = s.replace(
+                  f"PRODUCT_BUNDLE_IDENTIFIER = {old};",
+                  f"PRODUCT_BUNDLE_IDENTIFIER = {new};"
+              )
+
+          s = re.sub(
+              r"IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;",
+              "IPHONEOS_DEPLOYMENT_TARGET = 13.0;",
+              s
+          )
+          p.write_text(s)
+          PY
+
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName $APP_NAME" "$PLIST" 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string $APP_NAME" "$PLIST"
+
+          /usr/libexec/PlistBuddy -c "Set :NSFaceIDUsageDescription Kredi+ utiliza Face ID para proteger y desbloquear tu cuenta de forma segura." "$PLIST" 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :NSFaceIDUsageDescription string Kredi+ utiliza Face ID para proteger y desbloquear tu cuenta de forma segura." "$PLIST"
+
+          /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription Kredi+ utiliza la cámara para escanear códigos QR y registrar evidencias cuando corresponda." "$PLIST" 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string Kredi+ utiliza la cámara para escanear códigos QR y registrar evidencias cuando corresponda." "$PLIST"
+
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription Kredi+ necesita acceso a tus fotos únicamente cuando eliges una imagen para tu perfil o una evidencia." "$PLIST" 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string Kredi+ necesita acceso a tus fotos únicamente cuando eliges una imagen para tu perfil o una evidencia." "$PLIST"
+
+          if [ -f ios/Podfile ]; then
+            if grep -q "^platform :ios" ios/Podfile; then
+              sed -i '' "s/^platform :ios.*/platform :ios, '13.0'/" ios/Podfile
+            else
+              printf "platform :ios, '13.0'\n%s" "$(cat ios/Podfile)" > ios/Podfile
+            fi
+          fi
+
+          flutter pub get
+          dart run flutter_launcher_icons
+          dart run flutter_native_splash:create
+
+      - name: Compilar iOS sin firma
+        script: |
+          set -euo pipefail
+          flutter build ios --release --no-codesign
+
+      - name: Crear IPA para Sideloadly
+        script: |
+          set -euo pipefail
+          APP_PATH="build/ios/iphoneos/Runner.app"
+          OUT="build/ios/sideload"
+          test -d "$APP_PATH"
+          rm -rf "$OUT"
+          mkdir -p "$OUT/Payload"
+          cp -R "$APP_PATH" "$OUT/Payload/Runner.app"
+          cd "$OUT"
+          /usr/bin/zip -qry "KrediPlus-2.2.23-build48-unsigned.ipa" Payload
+          ls -lh "KrediPlus-2.2.23-build48-unsigned.ipa"
+
+    artifacts:
+      - build/ios/sideload/*.ipa
+      - /tmp/xcodebuild_logs/*.log
