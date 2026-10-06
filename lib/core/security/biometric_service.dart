@@ -21,8 +21,8 @@ class BiometricCapabilities {
   String get displayName => hasFace
       ? 'Face ID'
       : hasFingerprint
-          ? 'huella'
-          : 'biometría';
+          ? 'Touch ID'
+          : 'Face ID';
 }
 
 class BiometricResult {
@@ -123,7 +123,7 @@ class BiometricService {
       case LocalAuthExceptionCode.timeout:
         return null;
       case LocalAuthExceptionCode.noBiometricsEnrolled:
-        return 'No hay Face ID, huella o biometría configurada en este dispositivo.';
+        return 'No hay Face ID configurado en este iPhone.';
       case LocalAuthExceptionCode.noBiometricHardware:
         return 'Este dispositivo no dispone de biometría compatible.';
       case LocalAuthExceptionCode.noCredentialsSet:

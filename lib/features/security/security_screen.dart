@@ -45,7 +45,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         children: [
           const KrediScreenTitle(
             'Seguridad de tu cuenta',
-            subtitle: 'PIN, biometría y dispositivos.',
+            subtitle: 'PIN, Face ID y dispositivos.',
           ),
           const SizedBox(height: 18),
           KrediOutlineCard(
@@ -53,10 +53,10 @@ class _SecurityScreenState extends State<SecurityScreen> {
               children: [
                 KrediMenuRow(
                   icon: KrediIcons.biometric,
-                  title: 'Acceso biométrico',
+                  title: 'Face ID',
                   subtitle: lock.enabled
-                      ? 'Protege Kredi+ con la biometría de este dispositivo'
-                      : 'Usa Face ID, huella o biometría para desbloquear Kredi+',
+                      ? 'Protege Kredi+ con Face ID en este iPhone'
+                      : 'Usa Face ID para desbloquear Kredi+',
                   trailing: Switch.adaptive(
                     value: lock.enabled,
                     onChanged: lock.authenticating
@@ -122,7 +122,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Kredi+ no recibe ni almacena tus datos biométricos. Face ID, huella o biometría se validan en el dispositivo.',
+                    'Kredi+ no recibe ni almacena tus datos de Face ID. La validación se realiza de forma segura en el iPhone.',
                     style: TextStyle(
                       fontSize: 12.5,
                       height: 1.45,

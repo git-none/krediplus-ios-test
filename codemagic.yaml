@@ -67,8 +67,15 @@ workflows:
           fi
 
           flutter pub get
-          dart run flutter_launcher_icons
-          dart run flutter_native_splash:create
+
+          # Generar únicamente recursos iOS. El pubspec desactiva Android.
+          dart run flutter_launcher_icons -f pubspec.yaml
+          dart run flutter_native_splash:create --path=pubspec.yaml
+
+          # Verificaciones antes de compilar para fallar con un mensaje claro.
+          test -f ios/Runner/Info.plist
+          test -d ios/Runner/Assets.xcassets/AppIcon.appiconset
+          grep -q "NSFaceIDUsageDescription" ios/Runner/Info.plist
 
       - name: Compilar iOS sin firma
         script: |

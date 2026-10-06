@@ -33,20 +33,15 @@ flutter:
     - assets/brand/
 
 flutter_launcher_icons:
-  android: true
+  android: false
   ios: true
   image_path: "assets/brand/kredi_launcher.png"
+  image_path_ios: "assets/brand/kredi_launcher.png"
   remove_alpha_ios: true
-  adaptive_icon_background: "#FFF1E8"
-  adaptive_icon_foreground: "assets/brand/kredi_launcher_foreground.png"
-  min_sdk_android: 24
 
 flutter_native_splash:
-  android: true
+  android: false
   ios: true
   web: false
   color: "#FFFBF7"
   image: assets/brand/kredi_wordmark.png
-  android_12:
-    color: "#FFFBF7"
-    image: assets/brand/kredi_mark.png

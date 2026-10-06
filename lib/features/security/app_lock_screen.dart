@@ -49,10 +49,8 @@ class _AppLockScreenState extends State<AppLockScreen> {
     return AnimatedBuilder(
       animation: lock,
       builder: (context, _) {
-        final biometricName = lock.capabilities?.displayName ?? 'biometría';
-        final biometricIcon = lock.capabilities?.hasFace == true
-            ? Icons.face_retouching_natural_rounded
-            : KrediIcons.biometric;
+        final biometricName = lock.capabilities?.displayName ?? 'Face ID';
+        const biometricIcon = KrediIcons.biometric;
         return Scaffold(
         backgroundColor: const Color(0xFFFFFBF7),
         body: SafeArea(

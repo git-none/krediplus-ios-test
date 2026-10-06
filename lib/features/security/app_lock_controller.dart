@@ -71,7 +71,7 @@ class AppLockController extends ChangeNotifier {
       return false;
     }
     if (!caps.hasEnrolledBiometrics) {
-      _error = 'Configura Face ID, huella o biometría en tu dispositivo para activarla.';
+      _error = 'Configura Face ID en tu iPhone para activarlo.';
       notifyListeners();
       return false;
     }

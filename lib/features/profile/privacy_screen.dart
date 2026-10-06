@@ -45,8 +45,8 @@ class PrivacyScreen extends StatelessWidget {
                   Divider(height: 1),
                   _PrivacyItem(
                     icon: KrediIcons.biometric,
-                    title: 'Biometría del dispositivo',
-                    text: 'Face ID, huella o biometría se validan mediante el sistema del dispositivo. Kredi+ no guarda imágenes ni plantillas biométricas.',
+                    title: 'Face ID',
+                    text: 'Face ID se valida mediante el sistema del iPhone. Kredi+ no guarda imágenes ni plantillas biométricas.',
                   ),
                   Divider(height: 1),
                   _PrivacyItem(

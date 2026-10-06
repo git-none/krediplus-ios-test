@@ -81,7 +81,7 @@ class KrediIcons {
   static const IconData visibility = Icons.visibility_outlined;
   static const IconData visibilityOff = Icons.visibility_off_outlined;
   static const IconData verified = Icons.verified_outlined;
-  static const IconData biometric = Icons.fingerprint_rounded;
+  static const IconData biometric = Icons.face_retouching_natural_rounded;
 
   // Datos personales y ubicación.
   static const IconData personSearch = Icons.person_search_outlined;
